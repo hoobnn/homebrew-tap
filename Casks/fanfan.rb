@@ -16,6 +16,36 @@ cask "fanfan" do
 
   app "fanfan.app"
 
+  # Install the privileged SMC daemon during the cask run so the app's own
+  # first-launch installer is skipped. Homebrew caches sudo within a single
+  # cask run, so this and the uninstall step share one password prompt.
+  postflight do
+    daemon_src = "#{appdir}/fanfan.app/Contents/Resources/fanfan-smcd"
+    plist_src  = "#{appdir}/fanfan.app/Contents/Resources/com.hoobnn.fanfan.smcd.plist"
+    daemon_dst = "/usr/local/libexec/fanfan-smcd"
+    plist_dst  = "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist"
+
+    system_command "/bin/mkdir",
+                   args: ["-p", "/usr/local/libexec", "/Library/LaunchDaemons"],
+                   sudo: true
+    system_command "/bin/cp",         args: ["-f", daemon_src, daemon_dst], sudo: true
+    system_command "/usr/sbin/chown", args: ["root:wheel", daemon_dst],     sudo: true
+    system_command "/bin/chmod",      args: ["755", daemon_dst],            sudo: true
+    system_command "/bin/cp",         args: ["-f", plist_src, plist_dst],   sudo: true
+    system_command "/usr/sbin/chown", args: ["root:wheel", plist_dst],      sudo: true
+    system_command "/bin/chmod",      args: ["644", plist_dst],             sudo: true
+    system_command "/bin/launchctl",
+                   args:         ["bootout", "system", plist_dst],
+                   sudo:         true,
+                   must_succeed: false
+    system_command "/bin/launchctl",
+                   args: ["bootstrap", "system", plist_dst],
+                   sudo: true
+    system_command "/bin/launchctl",
+                   args: ["kickstart", "-k", "system/com.hoobnn.fanfan.smcd"],
+                   sudo: true
+  end
+
   uninstall launchctl: "com.hoobnn.fanfan.smcd",
             delete:    [
               "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist",
