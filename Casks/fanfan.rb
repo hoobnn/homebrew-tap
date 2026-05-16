@@ -37,7 +37,8 @@ cask "fanfan" do
     system_command "/bin/launchctl",
                    args:         ["bootout", "system", plist_dst],
                    sudo:         true,
-                   must_succeed: false
+                   must_succeed: false,
+                   print_stderr: false
     system_command "/bin/launchctl",
                    args: ["bootstrap", "system", plist_dst],
                    sudo: true
