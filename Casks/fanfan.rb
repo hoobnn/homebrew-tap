@@ -47,7 +47,8 @@ cask "fanfan" do
                    sudo: true
   end
 
-  uninstall launchctl: "com.hoobnn.fanfan.smcd",
+  uninstall quit:      "com.hoobnn.fanfan",
+            launchctl: "com.hoobnn.fanfan.smcd",
             delete:    [
               "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist",
               "/usr/local/libexec/fanfan-smcd",
