@@ -45,6 +45,18 @@ cask "fanfan" do
     system_command "/bin/launchctl",
                    args: ["kickstart", "-k", "system/com.hoobnn.fanfan.smcd"],
                    sudo: true
+
+    # Homebrew's `quit` directive is unreliable for an accessory (no Dock icon)
+    # menu-bar app on the upgrade path, so a pre-upgrade instance keeps running
+    # the old binary from memory. After the new build is staged and the daemon
+    # is live, terminate any lingering instance and relaunch the fresh binary in
+    # the background (-g, no focus steal) by full path — Launch Services may not
+    # have registered the just-copied bundle yet.
+    system_command "/usr/bin/pkill",
+                   args:         ["-f", "#{appdir}/fanfan.app/Contents/MacOS/fanfan"],
+                   must_succeed: false
+    sleep 1
+    system_command "/usr/bin/open", args: ["-g", "#{appdir}/fanfan.app"]
   end
 
   uninstall quit:      "com.hoobnn.fanfan",
