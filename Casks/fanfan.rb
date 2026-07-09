@@ -34,6 +34,16 @@ cask "fanfan" do
     system_command "/bin/cp",         args: ["-f", plist_src, plist_dst],   sudo: true
     system_command "/usr/sbin/chown", args: ["root:wheel", plist_dst],      sudo: true
     system_command "/bin/chmod",      args: ["644", plist_dst],             sudo: true
+    system_command "/usr/bin/xattr",
+                   args:         ["-d", "com.apple.quarantine", daemon_dst],
+                   sudo:         true,
+                   must_succeed: false,
+                   print_stderr: false
+    system_command "/usr/bin/xattr",
+                   args:         ["-d", "com.apple.quarantine", plist_dst],
+                   sudo:         true,
+                   must_succeed: false,
+                   print_stderr: false
     system_command "/bin/launchctl",
                    args:         ["bootout", "system", plist_dst],
                    sudo:         true,
