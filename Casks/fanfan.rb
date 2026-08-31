@@ -25,6 +25,29 @@ cask "fanfan" do
     daemon_dst        = "/Library/PrivilegedHelperTools/fanfan-smcd"
     legacy_daemon_dst = "/usr/local/libexec/fanfan-smcd"
     plist_dst         = "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist"
+    socket_path       = "/var/run/fanfan-smcd.sock"
+    app_executable    = "#{appdir}/fanfan.app/Contents/MacOS/fanfan"
+
+    # Stop the previous in-memory build before replacing its daemon. Otherwise
+    # launch-at-login can keep an older client alive throughout the upgrade.
+    system_command "/usr/bin/pkill",
+                   args:         ["-f", app_executable],
+                   must_succeed: false,
+                   print_stderr: false
+    app_stopped = begin
+      deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 10
+      loop do
+        running = system_command "/usr/bin/pgrep",
+                                 args:         ["-f", app_executable],
+                                 must_succeed: false,
+                                 print_stderr: false
+        break true unless running&.success?
+        break false if Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+
+        sleep 0.25
+      end
+    end
+    raise "previous fanfan process did not exit" unless app_stopped
 
     system_command "/bin/mkdir",
                    args: ["-p", "/Library/PrivilegedHelperTools", "/Library/LaunchDaemons"],
@@ -53,23 +76,35 @@ cask "fanfan" do
                    sudo:         true,
                    must_succeed: false,
                    print_stderr: false
+    system_command "/usr/bin/cmp", args: [daemon_src, daemon_dst]
+    system_command "/usr/bin/cmp", args: [plist_src, plist_dst]
     system_command "/bin/launchctl",
                    args: ["bootstrap", "system", plist_dst],
                    sudo: true
-    system_command "/bin/launchctl",
-                   args: ["kickstart", "-k", "system/com.hoobnn.fanfan.smcd"],
-                   sudo: true
+
+    # RunAtLoad + KeepAlive makes bootstrap start the daemon. A following
+    # `kickstart -k` would kill that fresh process and trigger launchd's
+    # minimum-runtime throttle, so wait for the versioned socket instead.
+    helper_ready = begin
+      deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + 20
+      loop do
+        ping = system_command "/usr/bin/nc",
+                              args:         ["-w", "1", "-U", socket_path],
+                              input:        "PINGV2\n",
+                              must_succeed: false,
+                              print_stderr: false
+        break true if ping&.stdout&.match?(/\AOK pong 2 (idle|active|restoring)\r?\n?\z/)
+        break false if Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+
+        sleep 0.25
+      end
+    end
+    raise "fanfan privileged helper did not become ready" unless helper_ready
 
     # Homebrew's `quit` directive is unreliable for an accessory (no Dock icon)
-    # menu-bar app on the upgrade path, so a pre-upgrade instance keeps running
-    # the old binary from memory. After the new build is staged and the daemon
-    # is live, terminate any lingering instance and relaunch the fresh binary in
-    # the background (-g, no focus steal) by full path — Launch Services may not
-    # have registered the just-copied bundle yet.
-    system_command "/usr/bin/pkill",
-                   args:         ["-f", "#{appdir}/fanfan.app/Contents/MacOS/fanfan"],
-                   must_succeed: false
-    sleep 1
+    # menu-bar app on the upgrade path. Once the daemon is confirmed live,
+    # relaunch the fresh binary in the background (-g, no focus steal) by full
+    # path — Launch Services may not have registered the copied bundle yet.
     system_command "/usr/bin/open", args: ["-g", "#{appdir}/fanfan.app"]
   end
 
