@@ -1,6 +1,6 @@
 cask "fanfan" do
-  version "1.1.2"
-  sha256 "2844bdfcbb56a6eea4247cc517693fc0ba78c30fdd2933b89c83864172cc6c6e"
+  version "1.2.0"
+  sha256 "b2bbe96d8a52e5ddf17cf866c55ec6ba89495c871ee702727f333040798ed772"
 
   url "https://github.com/hoobnn/fanfan/releases/download/v#{version}/fanfan-v#{version}-macos.dmg"
   name "fanfan"
@@ -22,18 +22,27 @@ cask "fanfan" do
   postflight do
     daemon_src = "#{appdir}/fanfan.app/Contents/Resources/fanfan-smcd"
     plist_src  = "#{appdir}/fanfan.app/Contents/Resources/com.hoobnn.fanfan.smcd.plist"
-    daemon_dst = "/usr/local/libexec/fanfan-smcd"
-    plist_dst  = "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist"
+    daemon_dst        = "/Library/PrivilegedHelperTools/fanfan-smcd"
+    legacy_daemon_dst = "/usr/local/libexec/fanfan-smcd"
+    plist_dst         = "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist"
 
     system_command "/bin/mkdir",
-                   args: ["-p", "/usr/local/libexec", "/Library/LaunchDaemons"],
+                   args: ["-p", "/Library/PrivilegedHelperTools", "/Library/LaunchDaemons"],
                    sudo: true
-    system_command "/bin/cp",         args: ["-f", daemon_src, daemon_dst], sudo: true
-    system_command "/usr/sbin/chown", args: ["root:wheel", daemon_dst],     sudo: true
-    system_command "/bin/chmod",      args: ["755", daemon_dst],            sudo: true
-    system_command "/bin/cp",         args: ["-f", plist_src, plist_dst],   sudo: true
-    system_command "/usr/sbin/chown", args: ["root:wheel", plist_dst],      sudo: true
-    system_command "/bin/chmod",      args: ["644", plist_dst],             sudo: true
+    system_command "/bin/launchctl",
+                   args:         ["bootout", "system", plist_dst],
+                   sudo:         true,
+                   must_succeed: false,
+                   print_stderr: false
+    system_command "/bin/rm",
+                   args: ["-f", daemon_dst, legacy_daemon_dst],
+                   sudo: true
+    system_command "/usr/bin/install",
+                   args: ["-o", "root", "-g", "wheel", "-m", "755", daemon_src, daemon_dst],
+                   sudo: true
+    system_command "/usr/bin/install",
+                   args: ["-o", "root", "-g", "wheel", "-m", "644", plist_src, plist_dst],
+                   sudo: true
     system_command "/usr/bin/xattr",
                    args:         ["-d", "com.apple.quarantine", daemon_dst],
                    sudo:         true,
@@ -41,11 +50,6 @@ cask "fanfan" do
                    print_stderr: false
     system_command "/usr/bin/xattr",
                    args:         ["-d", "com.apple.quarantine", plist_dst],
-                   sudo:         true,
-                   must_succeed: false,
-                   print_stderr: false
-    system_command "/bin/launchctl",
-                   args:         ["bootout", "system", plist_dst],
                    sudo:         true,
                    must_succeed: false,
                    print_stderr: false
@@ -69,10 +73,11 @@ cask "fanfan" do
     system_command "/usr/bin/open", args: ["-g", "#{appdir}/fanfan.app"]
   end
 
-  uninstall quit:      "com.hoobnn.fanfan",
-            launchctl: "com.hoobnn.fanfan.smcd",
+  uninstall launchctl: "com.hoobnn.fanfan.smcd",
+            quit:      "com.hoobnn.fanfan",
             delete:    [
               "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist",
+              "/Library/PrivilegedHelperTools/fanfan-smcd",
               "/usr/local/libexec/fanfan-smcd",
             ]
 
