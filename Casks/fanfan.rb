@@ -1,6 +1,6 @@
 cask "fanfan" do
-  version "1.2.1"
-  sha256 "bb08253752c43757efee7d73e3a7571a68ee667a107a5f28de1093a8b4e68a1f"
+  version "1.2.2"
+  sha256 "60aa33e753cf57e8cfbd4b5a06f029c73f7c72457bb8f8ead5de8cb1cd1fe2e9"
 
   url "https://github.com/hoobnn/fanfan/releases/download/v#{version}/fanfan-v#{version}-macos.dmg"
   name "fanfan"
