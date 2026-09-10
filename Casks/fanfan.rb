@@ -20,12 +20,6 @@ cask "fanfan" do
   # first-launch installer is skipped. Homebrew caches sudo within a single
   # cask run, so this and the uninstall step share one password prompt.
   postflight_steps do
-    # Stop the previous in-memory build before replacing its daemon. Otherwise
-    # launch-at-login can keep an older client alive throughout the upgrade.
-    terminate_process "{{appdir}}/fanfan.app/Contents/MacOS/fanfan",
-                      match:    :full,
-                      attempts: 5
-
     run "/bin/mkdir",
         args: ["-p", "/Library/PrivilegedHelperTools", "/Library/LaunchDaemons"],
         sudo: true
@@ -68,12 +62,6 @@ cask "fanfan" do
     run "/bin/launchctl",
         args: ["bootstrap", "system", "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist"],
         sudo: true
-
-    # Homebrew's `quit` directive is unreliable for an accessory (no Dock icon)
-    # menu-bar app on the upgrade path, so relaunch the fresh binary in the
-    # background (-g, no focus steal) by full path — Launch Services may not
-    # have registered the copied bundle yet.
-    run "/usr/bin/open", args: ["-g", "{{appdir}}/fanfan.app"]
   end
 
   uninstall launchctl: "com.hoobnn.fanfan.smcd",
@@ -90,4 +78,11 @@ cask "fanfan" do
     "~/Library/HTTPStorages/com.hoobnn.fanfan",
     "~/Library/Preferences/com.hoobnn.fanfan.plist",
   ]
+
+  # Process enumeration and Launch Services are unavailable in the install-step
+  # sandbox. Upgrade removal already uses `uninstall quit:` above; launching the
+  # GUI must be left to the user rather than making it an installation requirement.
+  caveats <<~EOS
+    After installation or upgrade, open fanfan from Applications.
+  EOS
 end
