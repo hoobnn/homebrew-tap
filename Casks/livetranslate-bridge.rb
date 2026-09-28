@@ -1,6 +1,6 @@
 cask "livetranslate-bridge" do
   version "1.0.0"
-  sha256 "22c02c0614f9d7d174fe1c8a905825c768b7f67cfa13b115500f0aadb9acb0a3"
+  sha256 "95e3298209721f6135575c1444ce7d6f5e416059b318b839975718098c1c9115"
 
   url "https://github.com/hoobnn/livetranslate-bridge/releases/download/v#{version}/LiveTranslateBridge-#{version}-macOS.dmg"
   name "LiveTranslateBridge"
