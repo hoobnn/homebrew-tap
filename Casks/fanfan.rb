@@ -27,11 +27,15 @@ cask "fanfan" do
                       match:    :full,
                       attempts: 5
 
-    # Homebrew's `quit` directive is unreliable for an accessory (no Dock icon)
-    # menu-bar app on the upgrade path, so relaunch the fresh binary in the
-    # background (-g, no focus steal) by full path — Launch Services may not
-    # have registered the copied bundle yet.
-    run "/usr/bin/open", args: ["-g", "{{appdir}}/fanfan.app"]
+    # Relaunch the fresh binary in the background (-g, no focus steal) by full
+    # path — Launch Services may not have registered the copied bundle yet.
+    # Best effort only: Homebrew runs steps without sudo inside a sandbox that
+    # can block app launches (LaunchServices -10810), and a failed relaunch
+    # must not roll back the whole install.
+    run "/usr/bin/open",
+        args:         ["-g", "{{appdir}}/fanfan.app"],
+        must_succeed: false,
+        print_stderr: false
   end
 
   # No `launchctl:`/`delete:` here: `brew upgrade` runs this stanza too, and
