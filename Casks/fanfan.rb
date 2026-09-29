@@ -16,61 +16,28 @@ cask "fanfan" do
 
   app "fanfan.app"
 
-  # Install the privileged SMC daemon during the cask run so the app's own
-  # first-launch installer is skipped. Homebrew caches sudo within a single
-  # cask run, so this and the uninstall step share one password prompt.
+  # Since 1.4 the fan-control helper ships inside the app and the app registers
+  # it through SMAppService (one approval in Login Items & Extensions, no
+  # password). The helper also removes the pre-1.4 system LaunchDaemon, so the
+  # cask needs no sudo steps.
   postflight_steps do
-    run "/bin/mkdir",
-        args: ["-p", "/Library/PrivilegedHelperTools", "/Library/LaunchDaemons"],
-        sudo: true
+    # Stop the previous in-memory build; the helper restarts onto the new
+    # binary by itself once the bundle is replaced.
+    terminate_process "{{appdir}}/fanfan.app/Contents/MacOS/fanfan",
+                      match:    :full,
+                      attempts: 5
 
-    run "/bin/launchctl",
-        args:         ["bootout", "system", "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist"],
-        sudo:         true,
-        must_succeed: false,
-        print_stderr: false
-    remove ["/Library/PrivilegedHelperTools/fanfan-smcd", "/usr/local/libexec/fanfan-smcd"], sudo: true
-
-    # `copy` 用 FileUtils.cp 且无 sudo 选项，写不进 root 拥有的目录；
-    # `set_permissions` 的 chmod 也固定 sudo: false。改用 install(1)
-    # 一步完成复制 + owner + mode。
-    run "/usr/bin/install",
-        args: ["-o", "root", "-g", "wheel", "-m", "755",
-               "{{appdir}}/fanfan.app/Contents/Resources/fanfan-smcd",
-               "/Library/PrivilegedHelperTools/fanfan-smcd"],
-        sudo: true
-    run "/usr/bin/install",
-        args: ["-o", "root", "-g", "wheel", "-m", "644",
-               "{{appdir}}/fanfan.app/Contents/Resources/com.hoobnn.fanfan.smcd.plist",
-               "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist"],
-        sudo: true
-
-    run "/usr/bin/xattr",
-        args:         ["-d", "com.apple.quarantine", "/Library/PrivilegedHelperTools/fanfan-smcd"],
-        sudo:         true,
-        must_succeed: false,
-        print_stderr: false
-    run "/usr/bin/xattr",
-        args:         ["-d", "com.apple.quarantine", "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist"],
-        sudo:         true,
-        must_succeed: false,
-        print_stderr: false
-
-    # RunAtLoad + KeepAlive makes bootstrap start the daemon, so no kickstart
-    # is needed: that would kill the fresh process and trip launchd's
-    # minimum-runtime throttle.
-    run "/bin/launchctl",
-        args: ["bootstrap", "system", "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist"],
-        sudo: true
+    # Homebrew's `quit` directive is unreliable for an accessory (no Dock icon)
+    # menu-bar app on the upgrade path, so relaunch the fresh binary in the
+    # background (-g, no focus steal) by full path — Launch Services may not
+    # have registered the copied bundle yet.
+    run "/usr/bin/open", args: ["-g", "{{appdir}}/fanfan.app"]
   end
 
-  uninstall launchctl: "com.hoobnn.fanfan.smcd",
-            quit:      "com.hoobnn.fanfan",
-            delete:    [
-              "/Library/LaunchDaemons/com.hoobnn.fanfan.smcd.plist",
-              "/Library/PrivilegedHelperTools/fanfan-smcd",
-              "/usr/local/libexec/fanfan-smcd",
-            ]
+  # No `launchctl:`/`delete:` here: `brew upgrade` runs this stanza too, and
+  # both need sudo and would tear down the registered helper. Deleting the app
+  # stops the helper, which runs from inside the bundle.
+  uninstall quit: "com.hoobnn.fanfan"
 
   zap trash: [
     "~/Library/Application Support/fanfan",
