@@ -18,6 +18,7 @@ brew install --cask fanfan
 | [`fanfan`](https://github.com/hoobnn/fanfan) | 菜单栏风扇控制与温度监控 | macOS 26+，Apple Silicon / Intel |
 | [`livetranslate-bridge`](https://github.com/hoobnn/livetranslate-bridge) | 通话、会议和 App 声音的实时翻译与双语字幕 | macOS 27+，Apple Silicon |
 | [`keyboard-logo-fix`](https://github.com/hoobnn/macos-keyboard-logo-fix) | 恢复 SCC100、FMate98 键盘自己设置的 LOGO 灯效 | macOS 12+ |
+| [`cuitnet`](https://github.com/hoobnn/cuit-campus-login) | 成都信息工程大学校园网自动登录 | macOS 14+，Apple Silicon / Intel |
 
 升级和卸载：
 
@@ -39,6 +40,7 @@ brew tap hoobnn/tap
 brew install --cask fanfan                 # Mac fan control & temperature monitor
 brew install --cask livetranslate-bridge   # live translation & subtitles for calls and app audio
 brew install --cask keyboard-logo-fix      # restore logo lighting on SCC100 / FMate98 keyboards
+brew install --cask cuitnet                # auto login for the CUIT campus network
 ```
 
 Casks are bumped automatically by each project's release workflow.
