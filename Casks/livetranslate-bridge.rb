@@ -3,7 +3,7 @@ cask "livetranslate-bridge" do
   sha256 "23d2c8c7ca81394c99a3900a0c86d24ee533afca4fd9ef47c3501d65d82b56ba"
 
   url "https://github.com/hoobnn/livetranslate-bridge/releases/download/v#{version}/LiveTranslateBridge-#{version}-macOS.dmg"
-  name "LiveTranslateBridge"
+  name "LiveTranslate Bridge"
   desc "Live transcription and translation for app audio and microphone"
   homepage "https://github.com/hoobnn/livetranslate-bridge"
 

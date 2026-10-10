@@ -3,7 +3,7 @@ cask "fanfan" do
   sha256 "55ee660ad5da6091b237f3187377c96edec40f3d4b73184e4817f5f015224594"
 
   url "https://github.com/hoobnn/fanfan/releases/download/v#{version}/fanfan-#{version}-macOS.dmg"
-  name "fanfan"
+  name "FanFan"
   desc "Menu bar fan-speed controller"
   homepage "https://github.com/hoobnn/fanfan"
 
