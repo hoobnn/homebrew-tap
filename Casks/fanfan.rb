@@ -41,13 +41,20 @@ cask "fanfan" do
   # No `launchctl:`/`delete:` here: `brew upgrade` runs this stanza too, and
   # both need sudo and would tear down the registered helper. Deleting the app
   # stops the helper, which runs from inside the bundle.
-  uninstall quit: "com.hoobnn.fanfan"
+  # 2.0 renamed the bundle ID; keep the 1.x one so upgrades from it still quit it.
+  uninstall quit: [
+    "com.ikuyu.fanfan",
+    "com.hoobnn.fanfan",
+  ]
 
   zap trash: [
     "~/Library/Application Support/fanfan",
     "~/Library/Caches/com.hoobnn.fanfan",
+    "~/Library/Caches/com.ikuyu.fanfan",
     "~/Library/HTTPStorages/com.hoobnn.fanfan",
+    "~/Library/HTTPStorages/com.ikuyu.fanfan",
     "~/Library/Preferences/com.hoobnn.fanfan.plist",
+    "~/Library/Preferences/com.ikuyu.fanfan.plist",
   ]
 
   # Process enumeration and Launch Services are unavailable in the install-step
