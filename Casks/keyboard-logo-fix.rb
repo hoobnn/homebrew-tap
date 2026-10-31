@@ -16,12 +16,14 @@ cask "keyboard-logo-fix" do
 
   app "Keyboard Logo Fix.app"
 
+  # `trash:` rather than `delete:`: `brew upgrade` runs this stanza too, and
+  # `delete:` always goes through sudo, even for paths under the home folder.
   uninstall launchctl: [
               "com.ikuyu.keyboard-logo-fix",
               "local.codex.t100-logo-white",
             ],
             quit:      "com.ikuyu.keyboard-logo-fix",
-            delete:    [
+            trash:     [
               "~/Library/LaunchAgents/com.ikuyu.keyboard-logo-fix.plist",
               "~/Library/LaunchAgents/local.codex.t100-logo-white.plist",
             ]
