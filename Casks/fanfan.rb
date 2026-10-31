@@ -12,6 +12,9 @@ cask "fanfan" do
     strategy :github_latest
   end
 
+  # Sparkle updates the app in place since 1.8, so `brew upgrade` leaves it
+  # alone unless run with --greedy.
+  auto_updates true
   depends_on macos: :tahoe
 
   app "fanfan.app"
