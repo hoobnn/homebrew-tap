@@ -1,6 +1,6 @@
 cask "keyboard-logo-fix" do
-  version "0.2.5"
-  sha256 "0fdc8360c1ec8a8329b28622e508049570156bee95176ffacb32eb207189a821"
+  version "0.2.6"
+  sha256 "591fa724be2533228b6c5bec10c4e467fec047f7de977b3964f76f690da6a3d1"
 
   url "https://github.com/hoobnn/macos-keyboard-logo-fix/releases/download/v#{version}/Keyboard-Logo-Fix-#{version}-macOS.dmg"
   name "Keyboard Logo Fix"
