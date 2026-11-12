@@ -1,6 +1,6 @@
 cask "verelay" do
-  version "1.2.1"
-  sha256 "f9bce76de28ad7b81303bbc0e9663b539849c5f717a3d4e554c6802416e7db24"
+  version "1.3.0"
+  sha256 "0add5b65e9533f59b2b24ef9144944d77b5c56bf3f339957566080c2005a8ca4"
 
   # The current release still has the original archive and app name.
   # CI updates version/sha256 on the first Verelay release.
