@@ -2,7 +2,7 @@
 
 **简体中文** · [English](#english)
 
-hoobnn/homebrew-tap 是 hoobnn 个人 macOS 应用的 Homebrew tap，用 `brew install --cask` 安装 FanFan（菜单栏风扇控制与温度监控）、LiveTranslate Bridge（实时语音翻译与双语字幕）、Keyboard Logo Fix（键盘 LOGO 灯效恢复）和 CUITNet（成都信息工程大学校园网自动登录）。安装包都来自各项目的 GitHub Releases，已签名并经过 Apple 公证。
+hoobnn/homebrew-tap 是 hoobnn 个人 macOS 应用的 Homebrew tap，用 `brew install --cask` 安装 FanFan（菜单栏风扇控制与温度监控）、Verelay（实时语音翻译与双语字幕）、Keyboard Logo Fix（键盘 LOGO 灯效恢复）和 CUITNet（成都信息工程大学校园网自动登录）。安装包都来自各项目的 GitHub Releases，已签名并经过 Apple 公证。
 
 ## 安装
 
@@ -16,7 +16,7 @@ brew install --cask fanfan
 | Cask | 说明 | 系统要求 | 项目 |
 | --- | --- | --- | --- |
 | `fanfan` | 菜单栏风扇控制与温度监控 | macOS 26+，Apple Silicon / Intel | [官网](https://hoobnn.github.io/fanfan/) · [GitHub](https://github.com/hoobnn/fanfan) |
-| `livetranslate-bridge` | 通话、会议和 App 声音的实时翻译与双语字幕 | macOS 27+，Apple Silicon | [官网](https://hoobnn.github.io/livetranslate-bridge/) · [GitHub](https://github.com/hoobnn/livetranslate-bridge) |
+| `verelay` | 通话、会议和 App 声音的实时翻译与双语字幕 | macOS 27+，Apple Silicon | [官网](https://hoobnn.github.io/verelay/) · [GitHub](https://github.com/hoobnn/verelay) |
 | `keyboard-logo-fix` | 恢复 SCC100、FMate98 键盘自己设置的 LOGO 灯效 | macOS 12+ | [GitHub](https://github.com/hoobnn/macos-keyboard-logo-fix) |
 | `cuitnet` | 成都信息工程大学校园网自动登录 | macOS 14+，Apple Silicon / Intel | [GitHub](https://github.com/hoobnn/cuit-campus-login) |
 
@@ -52,12 +52,12 @@ Homebrew 会自动给仓库名补上 `homebrew-` 前缀，所以 `hoobnn/tap` �
 
 ## English
 
-hoobnn/homebrew-tap is the Homebrew tap for hoobnn's personal macOS apps: FanFan (menu bar fan control and temperature monitor), LiveTranslate Bridge (real-time speech translation and bilingual subtitles), Keyboard Logo Fix (restores logo lighting on SCC100 / FMate98 keyboards) and CUITNet (auto login for the CUIT campus network). Install with `brew install --cask`. Every download comes from the project's GitHub Releases, signed and notarized by Apple.
+hoobnn/homebrew-tap is the Homebrew tap for hoobnn's personal macOS apps: FanFan (menu bar fan control and temperature monitor), Verelay (real-time speech translation and bilingual subtitles), Keyboard Logo Fix (restores logo lighting on SCC100 / FMate98 keyboards) and CUITNet (auto login for the CUIT campus network). Install with `brew install --cask`. Every download comes from the project's GitHub Releases, signed and notarized by Apple.
 
 ```sh
 brew tap hoobnn/tap
 brew install --cask fanfan                 # Mac fan control & temperature monitor
-brew install --cask livetranslate-bridge   # live translation & subtitles for calls and app audio
+brew install --cask verelay   # live translation & subtitles for calls and app audio
 brew install --cask keyboard-logo-fix      # restore logo lighting on SCC100 / FMate98 keyboards
 brew install --cask cuitnet                # auto login for the CUIT campus network
 ```
@@ -67,7 +67,7 @@ Or without tapping first: `brew install --cask hoobnn/tap/fanfan`.
 | Cask | Requires | Project |
 | --- | --- | --- |
 | `fanfan` | macOS 26+, Apple Silicon / Intel | [Website](https://hoobnn.github.io/fanfan/) · [GitHub](https://github.com/hoobnn/fanfan) |
-| `livetranslate-bridge` | macOS 27+, Apple Silicon | [Website](https://hoobnn.github.io/livetranslate-bridge/) · [GitHub](https://github.com/hoobnn/livetranslate-bridge) |
+| `verelay` | macOS 27+, Apple Silicon | [Website](https://hoobnn.github.io/verelay/) · [GitHub](https://github.com/hoobnn/verelay) |
 | `keyboard-logo-fix` | macOS 12+ | [GitHub](https://github.com/hoobnn/macos-keyboard-logo-fix) |
 | `cuitnet` | macOS 14+, Apple Silicon / Intel | [GitHub](https://github.com/hoobnn/cuit-campus-login) |
 
