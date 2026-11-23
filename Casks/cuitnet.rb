@@ -1,6 +1,6 @@
 cask "cuitnet" do
-  version "0.1.0"
-  sha256 "a6bee2a7f0fb9aca2069f626afaac96cf2c4937e27bf8308cf0dac90832aff44"
+  version "0.1.1"
+  sha256 "8b873e3618c4f7951d1798fda28cdac4ce3e35374429972a4e78b0f5de723f4e"
 
   url "https://github.com/hoobnn/cuit-campus-login/releases/download/v#{version}/CUITNet-#{version}-macOS.dmg"
   name "CUITNet"
